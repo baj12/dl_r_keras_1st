@@ -1,0 +1,41 @@
+---
+title: "XOR problem template"
+output: html_notebook
+---
+```{r}
+# this template assumes that the model is defined.
+```
+
+
+
+```{r}
+require(keras)
+require(ggplot2)
+```
+
+
+```{r}
+history <- model %>% fit(
+  data_train[[1]], data_train[[2]], 
+  epochs = 300, batch_size = 128, 
+  validation_split = 0.2
+)
+
+plot(history)
+
+```
+
+
+```{r}
+model %>% evaluate(data_train[[1]], data_train[[2]])
+model %>% evaluate(data_test[[1]],  data_test[[2]])
+
+```
+
+```{r}
+prediction <-
+model %>% predict_classes(data_test[[1]])
+ggplot(as.data.frame(data_test[[1]]), aes(x,y)) +  geom_point(aes(colour = factor(prediction)))
+
+```
+

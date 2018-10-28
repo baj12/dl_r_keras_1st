@@ -1,0 +1,432 @@
+---
+title: "XOR problem template"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+
+```{r}
+library(keras)
+library(ggplot2)
+```
+
+
+
+
+Here, we want to see which minimal architecture can learn the XOR problem.
+We will generalize the problem by using the quadrants instead of the values 1,1; -1,1; -1,-1; 1,-1
+
+```{r datasetup}
+xorData <- function(nPoints = 100, distBtwQuadrants = 0){
+  # data pre quadrant
+  q1 <- cbind(x = runif(nPoints) *  (1) + distBtwQuadrants, 
+              y = runif(nPoints) *  (1) + distBtwQuadrants)
+  q2 <- cbind(x = runif(nPoints) * (-1) - distBtwQuadrants, 
+              y = runif(nPoints) *  (1) + distBtwQuadrants)
+  q3 <- cbind(x = runif(nPoints) * (-1) - distBtwQuadrants,
+              y = runif(nPoints) * (-1) - distBtwQuadrants)
+  q4 <- cbind(x = runif(nPoints) *  (1) + distBtwQuadrants, 
+              y = runif(nPoints) * (-1) - distBtwQuadrants)
+  
+  # data per class
+  data_c1 <- rbind(q1,q3)
+  data_c2 <- rbind(q2,q4)
+  
+  # class values
+  class_c1 <- rep(1, nrow(data_c1))
+  class_c2 <- rep(0, nrow(data_c2))
+  
+  # scale data
+  data <- rbind(data_c1, data_c2)
+  data <- (data - min(data))/(max(data) - min(data))
+  
+  list(
+    data, 
+    to_categorical(matrix(c(class_c1, class_c2)), num_classes = 2)
+    )
+}
+# split train/test
+data_train <- xorData(nPoints = 100, distBtwQuadrants = 0.1)
+data_test <- xorData(nPoints = 5000, distBtwQuadrants = 0.0)
+
+```
+
+```{r}
+ggplot(as.data.frame(data_train[[1]]), aes(x,y)) +  geom_point(aes(colour = factor(data_train[[2]][,1])))
+ggplot(as.data.frame(data_test[[1]]), aes(x,y)) +  geom_point(aes(colour = factor(data_test[[2]][,1])))
+
+```
+
+
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 4, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 400, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 4000, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40000, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 400000, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 4, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 4, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 4, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 400, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 4, activation = 'relu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+
+
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40, activation = 'relu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 40, activation = 'relu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40, activation = 'softmax', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 40, activation = 'softmax') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 200, activation = 'relu') %>%
+  # layer_dense(units = 20, activation = 'relu') %>%
+  # softmax : all output adds up to 1. range (0,1)
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40, activation = 'elu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 40, activation = 'elu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
+
+
+
+
+
+```{r}
+model <- keras_model_sequential() 
+model %>% 
+  # 256 nodes in first hidden layer. The bias is added automatically, resulting in 200960 variables
+  layer_dense(units = 40, activation = 'elu', input_shape = c(2)) %>% 
+  # relu: positive part of its argument (flat 0 for x<0)
+  layer_dense(units = 40, activation = 'elu') %>%
+  layer_dense(units = 2, activation = 'softmax')
+
+model %>% compile(
+  loss = 'categorical_crossentropy',
+  optimizer = optimizer_rmsprop(),
+  metrics = c('accuracy')
+)
+
+summary(model)
+
+```
+
+
+```{r , child = 'xorTemplate.Rmd'}
+```
