@@ -1,0 +1,877 @@
+---
+title: "noise model"
+output: word_document
+---
+
+```{R}
+library(knitr)
+summarizeVec <- function(dat){
+  
+  plot(dat, main="orignal signal")
+  dat.fft = fft(dat)
+  plot(dat.fft)
+
+  print ("abs FFT")
+  print(summary(abs(dat.fft)))
+  print("Im")
+  print(summary(Im(dat.fft)))
+  print("Re")
+  print(summary(Re(dat.fft)))
+  
+  print("highest abs")
+  ordFFt=order(abs(dat.fft),decreasing = T)
+  kable(as.data.frame(abs(dat.fft)[ordFFt[1:50]]))
+  print("which highest abs")
+  print(ordFFt[1:50])
+  print ("highest 50 FFT values")
+  print(abs(dat.fft)[ordFFt][1:50])
+  hist(abs(dat.fft)[ordFFt][1:5000000])
+  acf(dat, lag.max = 1000)
+  
+}
+
+```
+
+
+The goal of this markdown document is test if a faint signal can be detected under a lot of noise and how to do this.
+
+We start off with the easiest scenario: a sinus function is hidden underneath some noise and we know the frequency:
+
+# Sinus length 100
+
+```{r first1, cache = TRUE}
+summarizeVec(dat = sin(c(1:100)/10))
+
+```
+
+
+# Sinus length 1000
+
+```{r first2, cache = TRUE}
+summarizeVec(dat = sin(c(1:1000)/10))
+
+```
+
+# Sinus length 10,000,000
+
+```{r first3, cache = TRUE}
+summarizeVec(dat = sin(c(1:10000000)/10))
+
+```
+
+
+# Sinus length 10,000 + noise min = -1000, max = 1000
+
+
+```{r first4, cache = TRUE}
+summarizeVec(dat = sin(c(1:10000)/10) + runif(length(dat), min = -1000, max = 1000))
+
+```
+
+
+
+
+n=1000
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -1000, max=1000)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+```
+
+```{r rand10K, cache = TRUE}
+n=10000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -1000, max=1000)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+```
+
+The function *acf* computes (and by default plots) estimates of the autocovariance or autocorrelation function. Function pacf is the function used for the partial autocorrelations. Function ccf computes the cross-correlation or cross-covariance of two univariate series.
+
+
+
+```{r rand100K, cache = TRUE}
+n=100000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -1000, max=1000)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+```
+
+```{r rand 1M, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -1000, max=1000)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+```{r rand 10M, cache = TRUE}
+n=10000000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -1000, max=1000)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+```{r rand 10M0-1000, cache = TRUE}
+n=10000000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min =0, max=1000)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+We know that our signal is between -1 and 1 and the noise is between -1000 and 1000, thus a factor 1000 difference. We see that with 1000 * 1000 we see the signal. Is it by  chance that it is square of the ratio?
+
+Let's redo with 100 instead of 1000
+
+```{r first-b, cache = TRUE}
+dat = sin(c(1:1000)/10)
+plot(dat, main="orignal signal")
+dat = dat + runif(length(dat), min = -100, max=100)
+plot(dat, main="org data +noise")
+
+n=1000
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+```
+
+```{r rand10K-b, cache = TRUE}
+n=10000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+```
+
+```{r rand100K-b, cache = TRUE}
+n=100000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+```
+
+```{r rand 1M-b, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+```{r rand 10M-b, cache = TRUE}
+n=10000000
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin(c(1:1000)/10)
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+This gives us already an idea that we need x^2 samples where x is the ratio between signal and noise.
+
+## how large can the noise be? 
+
+Given that we measure at 12 bit (this what is usally done, but i need confirmation from Galle & Co.) we can get values between 0 and 2^12-1 = 4095.
+Thus in the worst case we need (2^12)^2 samples ~=17 Million samples. This is in the case that the max noise level reaches 4000 and our signal is at one. I guess the signal should be around 10 and the noise around 1000 max, thus we need about 10,000 samples.
+
+From what I remember from my mom, she can get a measurement in less than a second. So if we need 1 second per measurement we would need to aquire 17M / 60 (seconds) / 60 (minutes) / 24 (hours) ~= 200 days of measurements...
+
+For the more reasonable case of 10,000 samples we would need 10,000 / 60/60 ~= 3 hrs of capture.
+
+There is still one small catch...
+we would need a continous capture and I am not sure that the redpitaya can do this...
+
+But there are packages in R that can deal with this type of problem...
+
+Why do we need a continous capture? 
+Because without knowing the exact time context we cannot correctly align the spectra. So let's see what happens if we add some noise to the x-axis:
+
+here we add noise to x: runif gives values between -1 and + 1 we add this to the x values which go from 1 to 1000. We devide by 10 to capture more details of the sinus function.
+n is the number of repetions we do. This is a bit slower than multiplying but less dangerous in terms of introducing errors since I believe i understand this way better...
+
+```{r rand 1M-b-normal 0.001, cache = TRUE}
+n=1000000
+noiseXFactor=0.001
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+```{r rand 1M-b-normal 0.01, cache = TRUE}
+n=1000000
+noiseXFactor=0.01
+dat = sin(c(1:1000)/10)
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+```{r rand 1M-b-normal 0.1, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=0.1
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+```{r rand 1M-b-normal 0.2, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=0.2
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+```{r rand 1M-b-normal pi, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=pi
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+```{r rand 1M-b-normal 1, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=1
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+```{r rand 1M-b-normal 10, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=10
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+We see that the noise on the x-axis is somehow not relevant... (only if it is multiplyer of pi...)
+
+Next, let's simulate what happens if we add sections that are not aligned, like we take multiple measurements of lenght X and just add them on top of each other... That is we shift the sinus by a random number for each iteration
+
+```{r multimeasure, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+for(idx in c(1:n)){
+  dat = dat + sin((c(1:1000)+ runif(1)*noiseXFactor)/10 )
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift"))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+
+what happens if we have multiple sinus that have different amplitudes and  frequencies
+
+# Two:
+
+amp=c(1,5)
+frq=1/c(1,5)
+
+```{r multi signal, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=c(1,5)
+frq=1/c(1,5)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "amp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+amp=c(1,5)
+frq=1/c(1,1)
+
+```{r multisignal 2, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=c(1,5)
+frq=1/c(1,1)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "amp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+amp=c(1,100)
+frq=1/c(1,100)
+
+```{r multisignal 3, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=c(1,100)
+frq=1/c(1,100)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "amp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+amp=c(1,100)
+frq=1/c(1,2)
+
+```{r multisignal 4, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=c(1,100)
+frq=1/c(1,2)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "amp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+amp=c(1,100)
+frq=1/c(1,1.1)
+
+```{r multisignal 5, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=c(1,100)
+frq=1/c(1,1.1)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "amp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+# multiple
+amp=sample(1:100, 20)
+frq=1/sample(1:100, 20)
+
+```{r multisignal 6, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=sample(1:100, 20)
+frq=1/sample(1:100, 20)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "\namp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+amp=sample(1:1000, 200)
+frq=1/sample(1:1000, 200)
+
+
+```{r multisignal 7, cache = TRUE}
+n=1000000
+dat = sin(c(1:1000)/10)
+noiseXFactor=3
+amp=sample(1:1000, 200)
+frq=1/sample(1:1000, 200)
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000)+ runif(1)*noiseXFactor)/frq[nsi] )
+  }
+  dat = dat + runif(length(dat), min = -100, max=100)
+}
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "\namp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+Sys.time()
+
+```
+
+## identify frequencies and amplitudes, decompose
+
+
+now what happens if everything has one or more frequency? We would have millions of signals at the same time. The noise would actually be the signal.
+We would have to figure out the one signal that distinguishes between the sample and the control. We have a classification problem.
+
+Or we can do this simply by aligning and substracting two different spectra?
+
+Before investigating classification methods let's look at if and how we can decopose a given spectrum.
+
+```{r decompose, cache = TRUE }
+plot(dat, type='l',main=paste("org data +noise * ",n, " nF:", noiseXFactor, "shift, \nmulti signal: frq: ", paste(frq, collapse = ", "), "\namp:", paste(amp,collapse = ", ")))
+acf(dat, lag.max = 1000)
+
+fit = stl(ts(dat,frequency = 100), s.window = 21)
+plot(fit)
+
+decompose(ts(dat,frequency = 100), type = c("additive"))
+
+```
+
+```{r}
+library("Rlibeemd")
+ceedat = ceemdan(ts(dat,frequency = 100), ensemble_size = 1000)
+plot(ceedat, main = " IMFs and residual extracted by CEEMDAN algorithm")
+```
+
+Binary vector genetic algorithm. This has the advantage of having much fewer possibilities as we can only generate 2^7 = 128 different values per parameter, and the crossover has potentially greate effects. We run the GA multiple times and carry over the best. I.e. something like a GA of an GA that allows for finding better local minima.
+
+we need to check if the neighbors, i.e. the mutations with only one substitution have similar values.
+
+```{r genalg}
+nSin = 2 # number of sinus curves to add
+n=100000 # number of samples to add
+# init 
+amp=sample(1:100, nSin)
+frq=sample(1:100, nSin)
+#generate data
+dat = rep(0,1000) 
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000))*frq[nsi] )
+  }
+  #dat = dat + runif(length(dat), min = -100, max=100)
+}
+# plot added sinus curve
+par(mfrow=c(1,1))
+plot(dat, type='l')    
+#Which signal to be found
+x=c(amp,frq)
+genBinDat <- function(x) {
+  nBin=7
+  xstr=paste0(as.character(x),collapse = "")
+  x=xstr %>% substring(seq(1,nchar(xstr)-1,nBin),
+         seq(nBin,nchar(xstr)+1,nBin)) %>% strtoi(base=2)
+  len = length(x)
+  len2 = len/2
+  lenVec = length(dat)
+  amp=x[1:len2]
+  frq=x[(len2+1):len]
+  datEv=rep(0,lenVec)
+    for (nsi in 1:length(frq)){
+      datEv = datEv + amp[nsi] * sin(c(1:lenVec)*frq[nsi] )
+    }
+  #plot(datEv, type='l')
+  datEv = datEv - min(datEv)
+  datEv = datEv/max(datEv)
+  #plot(datEv, type='l')
+  
+  return(datEv)
+}
+plot(genBinDat(x), type='l',main="orginal")
+
+n2bin <- function(x){
+  
+}
+
+ampOrg = amp
+freqOrg = frq
+xOrg=c(ampOrg,freqOrg)
+
+
+library(genalg)
+library(ggplot2)
+#The genalg algorithm tries to optimize towards the minimum value. 
+datOrg = dat
+
+max(dat)
+min(dat)
+dat = dat - min(dat)
+dat = dat/max(dat)
+
+evalFunc <- function(x) {
+  len = length(x)
+  len2 = length(x)/2
+  lenVec = length(dat)
+  amp=x[1:(length(x)/2)]
+  frq=x[(len2+1):(len)]
+  datEv=rep(0,lenVec)
+  for (nsi in 1:length(frq)){
+    datEv = datEv + amp[nsi] * sin((c(1:lenVec))*frq[nsi] )
+  }
+  
+  datEv = datEv - min(datEv)
+  datEv = datEv/max(datEv)
+  # return(sum(sqrt((dat - datEv)^2)))
+  return(as.numeric(dist(matrix(c(dat,datEv),nrow = 2,byrow=T))))
+}
+evalFunc(x)
+
+
+library(dplyr)
+#x=c(0,1,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0)
+#strtoi(paste0(as.character(x),collapse = ""),base=2)
+evalBinFunc <- function(x) {
+nBin=7
+  xstr=paste0(as.character(x),collapse = "")
+  x=xstr %>% substring(seq(1,nchar(xstr)-1,nBin),
+         seq(nBin,nchar(xstr)+1,nBin)) %>% strtoi(base=2)
+  len = length(x)
+  len2 = length(x)/2
+  lenVec = length(dat)
+  amp=x[1:(length(x)/2)]
+  frq=x[(len2+1):(len)]
+  datEv=rep(0,lenVec)
+  for (nsi in 1:length(frq)){
+    datEv = datEv + amp[nsi] * sin((c(1:lenVec))*frq[nsi] )
+  }
+  
+  datEv = datEv - min(datEv)
+  datEv = datEv/max(datEv)
+  if(is.na(datEv) %>% sum >0) return (999999999999)
+  # return(sum(sqrt((dat - datEv)^2)))
+  return(as.numeric(dist(matrix(c(dat,datEv),nrow = 2,byrow=T))))
+}
+
+evalBinFunc(x)
+
+
+st=1
+monitor <- function(obj) {
+  # plot the population
+  xlim = c(obj$stringMin[1], obj$stringMax[1]);
+  ylim = c(obj$stringMin[2], obj$stringMax[2]);
+  #    plot(obj$population, xlim=xlim, ylim=ylim,xlab="x[1]", ylab="x[2]", cex = .1, main=paste(st,":",Sys.time()));
+  bestVec[(iter*(idx-1)+1):(iter*idx)] <<- obj$best
+  plot(log(bestVec[!is.na(bestVec)]), cex = .1, type='l', main=paste(st,":",Sys.time(), ":", idx));
+  st<<-st+1
+}
+
+GAmodel=list()
+nrepeat=100000
+iter = 10
+bestVec=rep(NA,nrepeat*iter)
+
+#suggestions = matrix(c(1,1,1,1),nrow = 1)
+suggestions = matrix(rep(1,28),nrow = 1)
+dim(suggestions)
+for (idx in 1:nrepeat){
+  st=1
+#  GAmodel[[idx]] <- rbga(stringMin = rep(0,2*nSin), 
+#                         stringMax = c(rep(100,nSin),rep(100,nSin)),  
+  GAmodel[[idx]] <- rbga.bin(size=28,  
+                             popSize = 2800, iters = iter, 
+                             mutationChance = 0.1, elitism = T, 
+                             #evalFunc = evalFunc,  
+                             evalFunc = evalBinFunc,  
+                             monitorFunc=monitor, 
+                             suggestions = suggestions,
+                             verbose=T)
+  currRet = apply(GAmodel[[idx]]$population, 1, evalBinFunc)
+  suggestions = matrix(GAmodel[[idx]]$population[
+    which(min(currRet)==currRet)[1]
+    ,],nrow = 1)
+}
+
+cat(summary(GAmodel))
+
+y=GAmodel[[idx-1]]$population[1,]
+evalBinFunc(y)
+
+plot(genDat(xOrg), type='l')
+plot(genDat(y), type='l')
+plot(genDat(y)-genDat(xOrg), type='l')
+evalFunc(xOrg)
+evalFunc(y)
+y
+xOrg
+
+
+plot.new()
+par(mfrow=c(2,5))
+
+for(idx in 1:15){
+  y=GAmodel[[idx]]$population[1,]
+  plot(genDat(y)-genDat(xOrg), type='l', main=idx)
+}
+
+
+# best return values
+GAmodel$best
+# current population
+GAmodel$population
+
+currRet = apply(GAmodel$population, 1, evalFunc)
+GAmodel$population[which(min(currRet)==currRet),]
+
+
+
+monitor(GAmodel)
+
+```
+
+reelle genetic algorithm
+
+
+```{r genalgRell}
+nSin = 2 # number of sinus curves to add
+n=100000 # number of samples to add
+# init 
+amp=sample(1:100, nSin)
+frq=sample(1:100, nSin)
+#generate data
+dat = rep(0,1000) 
+for(idx in c(1:n)){
+  for (nsi in 1:length(frq)){
+    dat = dat + amp[nsi] * sin((c(1:1000))*frq[nsi] )
+  }
+  #dat = dat + runif(length(dat), min = -100, max=100)
+}
+# plot added sinus curve
+par(mfrow=c(1,1))
+plot(dat, type='l')    
+#Which signal to be found
+x=c(amp,frq)
+genDat <- function(x) {
+  len = length(x)
+  len2 = len/2
+  lenVec = length(dat)
+  amp=x[1:len2]
+  frq=x[(len2+1):len]
+  datEv=rep(0,lenVec)
+    for (nsi in 1:length(frq)){
+      datEv = datEv + amp[nsi] * sin(c(1:lenVec)*frq[nsi] )
+    }
+  #plot(datEv, type='l')
+  datEv = datEv - min(datEv)
+  datEv = datEv/max(datEv)
+  #plot(datEv, type='l')
+  
+  return(datEv)
+}
+plot(genDat(x), type='l',main="orginal")
+
+
+
+ampOrg = amp
+freqOrg = frq
+xOrg=c(ampOrg,freqOrg)
+
+
+library(genalg)
+library(ggplot2)
+#The genalg algorithm tries to optimize towards the minimum value. 
+datOrg = dat
+
+max(dat)
+min(dat)
+dat = dat - min(dat)
+dat = dat/max(dat)
+
+evalFunc <- function(x) {
+  len = length(x)
+  len2 = length(x)/2
+  lenVec = length(dat)
+  amp=x[1:(length(x)/2)]
+  frq=x[(len2+1):(len)]
+  datEv=rep(0,lenVec)
+  for (nsi in 1:length(frq)){
+    datEv = datEv + amp[nsi] * sin((c(1:lenVec))*frq[nsi] )
+  }
+  
+  datEv = datEv - min(datEv)
+  datEv = datEv/max(datEv)
+  # return(sum(sqrt((dat - datEv)^2)))
+  return(as.numeric(dist(matrix(c(dat,datEv),nrow = 2,byrow=T))))
+}
+evalFunc(x)
+
+
+
+st=1
+monitor <- function(obj) {
+  # plot the population
+  xlim = c(obj$stringMin[1], obj$stringMax[1]);
+  ylim = c(obj$stringMin[2], obj$stringMax[2]);
+  #    plot(obj$population, xlim=xlim, ylim=ylim,xlab="x[1]", ylab="x[2]", cex = .1, main=paste(st,":",Sys.time()));
+  bestVec[(iter*(idx-1)+1):(iter*idx)] <<- obj$best
+  plot(log(bestVec[!is.na(bestVec)]), cex = .1, type='l', main=paste(st,":",Sys.time(), ":", idx));
+  st<<-st+1
+}
+
+GAmodel=list()
+nrepeat=100000
+iter = 10
+bestVec=rep(NA,nrepeat*iter)
+
+suggestions = matrix(c(1,1,1,1),nrow = 1)
+dim(suggestions)
+for (idx in 1:nrepeat){
+  st=1
+  GAmodel[[idx]] <- rbga(stringMin = rep(0,2*nSin), 
+                         stringMax = c(rep(100,nSin),rep(100,nSin)),  
+                             popSize = 2800, iters = iter, 
+                             mutationChance = 0.1, elitism = T, 
+                             evalFunc = evalFunc,  
+                             monitorFunc=monitor, 
+                             suggestions = suggestions,
+                             verbose=T)
+  currRet = apply(GAmodel[[idx]]$population, 1, evalFunc)
+  suggestions = matrix(GAmodel[[idx]]$population[
+    which(min(currRet)==currRet)[1]
+    ,],nrow = 1)
+}
+
+cat(summary(GAmodel))
+
+y=GAmodel[[idx-1]]$population[1,]
+evalBinFunc(y)
+
+plot(genDat(xOrg), type='l')
+plot(genDat(y), type='l')
+plot(genDat(y)-genDat(xOrg), type='l')
+evalFunc(xOrg)
+evalFunc(y)
+y
+xOrg
+
+
+plot.new()
+par(mfrow=c(2,5))
+
+for(idx in 1:15){
+  y=GAmodel[[idx]]$population[1,]
+  plot(genDat(y)-genDat(xOrg), type='l', main=idx)
+}
+
+
+# best return values
+GAmodel$best
+# current population
+GAmodel$population
+
+currRet = apply(GAmodel$population, 1, evalFunc)
+GAmodel$population[which(min(currRet)==currRet),]
+
+
+
+monitor(GAmodel)
+
+```
+
