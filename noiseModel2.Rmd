@@ -64,13 +64,14 @@ summarizeVec(dat = sin(c(1:10000000)/10))
 
 
 ```{r first4, cache = TRUE}
-summarizeVec(dat = sin(c(1:10000)/10) + runif(length(dat), min = -1000, max = 1000))
+dat = sin(c(1:10000)/10)
+summarizeVec(dat = dat + runif(length(dat), min = -1000, max = 1000))
 
 ```
 
 
 
-
+```{r }
 n=1000
 for(idx in c(1:n)){
   dat = dat + sin(c(1:1000)/10)
@@ -536,6 +537,7 @@ decompose(ts(dat,frequency = 100), type = c("additive"))
 
 ```{r}
 library("Rlibeemd")
+library(dplyr)
 ceedat = ceemdan(ts(dat,frequency = 100), ensemble_size = 1000)
 plot(ceedat, main = " IMFs and residual extracted by CEEMDAN algorithm")
 ```
@@ -544,7 +546,7 @@ Binary vector genetic algorithm. This has the advantage of having much fewer pos
 
 we need to check if the neighbors, i.e. the mutations with only one substitution have similar values.
 
-```{r genalg}
+```{r genalg, eval=FALSE}
 nSin = 2 # number of sinus curves to add
 n=100000 # number of samples to add
 # init 
@@ -767,7 +769,9 @@ genDat <- function(x) {
 }
 plot(genDat(x), type='l',main="orginal")
 
+```
 
+```{r}
 
 ampOrg = amp
 freqOrg = frq
