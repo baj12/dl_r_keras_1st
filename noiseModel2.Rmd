@@ -57,7 +57,12 @@ summarizeVec(dat = sin(c(1:1000)/10))
 # Sinus length 10,000,000
 
 ```{r first3, cache = TRUE}
-summarizeVec(dat = sin(c(1:10000000)/10))
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+}else{
+  summarizeVec(dat = sin(c(1:10000000)/10))
+}
+
 
 ```
 
@@ -101,55 +106,68 @@ The function *acf* computes (and by default plots) estimates of the autocovarian
 
 
 ```{r rand100K, cache = TRUE}
-n=100000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min = -1000, max=1000)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+}else{
+  n=100000
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min = -1000, max=1000)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
 ```
 
 ```{r rand 1M, cache = TRUE}
-n=1000000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min = -1000, max=1000)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+}else{
+  n=1000000
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min = -1000, max=1000)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
-
 ```
 
 ```{r rand 10M, cache = TRUE}
-n=10000000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min = -1000, max=1000)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+}else{
+  n=10000000
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min = -1000, max=1000)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
-
 ```
 
 
 ```{r rand 10M0-1000, cache = TRUE}
-n=10000000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min =0, max=1000)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+}else{
+  n=10000000
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min =0, max=1000)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
-
 ```
 
 
@@ -186,40 +204,56 @@ Sys.time()
 ```
 
 ```{r rand100K-b, cache = TRUE}
-n=100000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
+
 ```
 
 ```{r rand 1M-b, cache = TRUE}
-n=1000000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 
 ```
 
 ```{r rand 10M-b, cache = TRUE}
-n=10000000
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin(c(1:1000)/10)
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n))
-acf(dat, lag.max = 1000)
-Sys.time()
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin(c(1:1000)/10)
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 
 ```
 
@@ -247,65 +281,95 @@ here we add noise to x: runif gives values between -1 and + 1 we add this to the
 n is the number of repetions we do. This is a bit slower than multiplying but less dangerous in terms of introducing errors since I believe i understand this way better...
 
 ```{r rand 1M-b-normal 0.001, cache = TRUE}
-n=1000000
-noiseXFactor=0.001
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
-acf(dat, lag.max = 1000)
-Sys.time()
+  noiseXFactor=0.001
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 
 ```
 
 
 ```{r rand 1M-b-normal 0.01, cache = TRUE}
-n=1000000
-noiseXFactor=0.01
-dat = sin(c(1:1000)/10)
-for(idx in c(1:n)){
-  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
-acf(dat, lag.max = 1000)
-Sys.time()
+  noiseXFactor=0.01
+  dat = sin(c(1:1000)/10)
+  for(idx in c(1:n)){
+    dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 
 ```
+
+
+
+
+
 ```{r rand 1M-b-normal 0.1, cache = TRUE}
-n=1000000
-dat = sin(c(1:1000)/10)
-noiseXFactor=0.1
-for(idx in c(1:n)){
-  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
-acf(dat, lag.max = 1000)
-Sys.time()
+  dat = sin(c(1:1000)/10)
+  noiseXFactor=0.1
+  for(idx in c(1:n)){
+    dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 
 ```
 
 
 ```{r rand 1M-b-normal 0.2, cache = TRUE}
-n=1000000
-dat = sin(c(1:1000)/10)
-noiseXFactor=0.2
-for(idx in c(1:n)){
-  dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
-  dat = dat + runif(length(dat), min = -100, max=100)
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
 }
-plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
-acf(dat, lag.max = 1000)
-Sys.time()
+  dat = sin(c(1:1000)/10)
+  noiseXFactor=0.2
+  for(idx in c(1:n)){
+    dat = dat + sin((c(1:1000)+ runif(1000)*noiseXFactor)/10 )
+    dat = dat + runif(length(dat), min = -100, max=100)
+  }
+  plot(dat, main=paste("org data +noise * ",n, " nF:", noiseXFactor))
+  acf(dat, lag.max = 1000)
+  Sys.time()
 
 ```
 
 
 ```{r rand 1M-b-normal pi, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=pi
 for(idx in c(1:n)){
@@ -320,7 +384,12 @@ Sys.time()
 
 
 ```{r rand 1M-b-normal 1, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=1
 for(idx in c(1:n)){
@@ -335,7 +404,12 @@ Sys.time()
 
 
 ```{r rand 1M-b-normal 10, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=10
 for(idx in c(1:n)){
@@ -353,7 +427,12 @@ We see that the noise on the x-axis is somehow not relevant... (only if it is mu
 Next, let's simulate what happens if we add sections that are not aligned, like we take multiple measurements of lenght X and just add them on top of each other... That is we shift the sinus by a random number for each iteration
 
 ```{r multimeasure, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 for(idx in c(1:n)){
@@ -375,7 +454,12 @@ amp=c(1,5)
 frq=1/c(1,5)
 
 ```{r multi signal, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=c(1,5)
@@ -395,7 +479,12 @@ amp=c(1,5)
 frq=1/c(1,1)
 
 ```{r multisignal 2, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=c(1,5)
@@ -415,7 +504,12 @@ amp=c(1,100)
 frq=1/c(1,100)
 
 ```{r multisignal 3, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=c(1,100)
@@ -435,7 +529,12 @@ amp=c(1,100)
 frq=1/c(1,2)
 
 ```{r multisignal 4, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=c(1,100)
@@ -455,7 +554,12 @@ amp=c(1,100)
 frq=1/c(1,1.1)
 
 ```{r multisignal 5, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=c(1,100)
@@ -477,7 +581,12 @@ amp=sample(1:100, 20)
 frq=1/sample(1:100, 20)
 
 ```{r multisignal 6, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=sample(1:100, 20)
@@ -499,7 +608,12 @@ frq=1/sample(1:1000, 200)
 
 
 ```{r multisignal 7, cache = TRUE}
-n=1000000
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 dat = sin(c(1:1000)/10)
 noiseXFactor=3
 amp=sample(1:1000, 200)
@@ -549,9 +663,13 @@ Binary vector genetic algorithm. This has the advantage of having much fewer pos
 we need to check if the neighbors, i.e. the mutations with only one substitution have similar values.
 
 ```{r genalg, eval=FALSE}
-n=10000
 nSin = 2 # number of sinus curves to add
-n=10000 # number of samples to add
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  print("development version")
+  n=100
+}else{
+  n=1000000
+}
 # init 
 amp=sample(1:100, nSin)
 frq=sample(1:100, nSin)
