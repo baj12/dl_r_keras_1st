@@ -1,6 +1,8 @@
 ---
 title: "noise model"
 output: word_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{R}
@@ -10,7 +12,7 @@ summarizeVec <- function(dat){
   plot(dat, main="orignal signal")
   dat.fft = fft(dat)
   plot(dat.fft)
-
+  
   print ("abs FFT")
   print(summary(abs(dat.fft)))
   print("Im")
@@ -547,8 +549,9 @@ Binary vector genetic algorithm. This has the advantage of having much fewer pos
 we need to check if the neighbors, i.e. the mutations with only one substitution have similar values.
 
 ```{r genalg, eval=FALSE}
+n=10000
 nSin = 2 # number of sinus curves to add
-n=100000 # number of samples to add
+n=10000 # number of samples to add
 # init 
 amp=sample(1:100, nSin)
 frq=sample(1:100, nSin)
@@ -569,16 +572,16 @@ genBinDat <- function(x) {
   nBin=7
   xstr=paste0(as.character(x),collapse = "")
   x=xstr %>% substring(seq(1,nchar(xstr)-1,nBin),
-         seq(nBin,nchar(xstr)+1,nBin)) %>% strtoi(base=2)
+                       seq(nBin,nchar(xstr)+1,nBin)) %>% strtoi(base=2)
   len = length(x)
   len2 = len/2
   lenVec = length(dat)
   amp=x[1:len2]
   frq=x[(len2+1):len]
   datEv=rep(0,lenVec)
-    for (nsi in 1:length(frq)){
-      datEv = datEv + amp[nsi] * sin(c(1:lenVec)*frq[nsi] )
-    }
+  for (nsi in 1:length(frq)){
+    datEv = datEv + amp[nsi] * sin(c(1:lenVec)*frq[nsi] )
+  }
   #plot(datEv, type='l')
   datEv = datEv - min(datEv)
   datEv = datEv/max(datEv)
@@ -630,10 +633,10 @@ library(dplyr)
 #x=c(0,1,0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0)
 #strtoi(paste0(as.character(x),collapse = ""),base=2)
 evalBinFunc <- function(x) {
-nBin=7
+  nBin=7
   xstr=paste0(as.character(x),collapse = "")
   x=xstr %>% substring(seq(1,nchar(xstr)-1,nBin),
-         seq(nBin,nchar(xstr)+1,nBin)) %>% strtoi(base=2)
+                       seq(nBin,nchar(xstr)+1,nBin)) %>% strtoi(base=2)
   len = length(x)
   len2 = length(x)/2
   lenVec = length(dat)
@@ -675,8 +678,8 @@ suggestions = matrix(rep(1,28),nrow = 1)
 dim(suggestions)
 for (idx in 1:nrepeat){
   st=1
-#  GAmodel[[idx]] <- rbga(stringMin = rep(0,2*nSin), 
-#                         stringMax = c(rep(100,nSin),rep(100,nSin)),  
+  #  GAmodel[[idx]] <- rbga(stringMin = rep(0,2*nSin), 
+  #                         stringMax = c(rep(100,nSin),rep(100,nSin)),  
   GAmodel[[idx]] <- rbga.bin(size=28,  
                              popSize = 2800, iters = iter, 
                              mutationChance = 0.1, elitism = T, 
@@ -757,9 +760,9 @@ genDat <- function(x) {
   amp=x[1:len2]
   frq=x[(len2+1):len]
   datEv=rep(0,lenVec)
-    for (nsi in 1:length(frq)){
-      datEv = datEv + amp[nsi] * sin(c(1:lenVec)*frq[nsi] )
-    }
+  for (nsi in 1:length(frq)){
+    datEv = datEv + amp[nsi] * sin(c(1:lenVec)*frq[nsi] )
+  }
   #plot(datEv, type='l')
   datEv = datEv - min(datEv)
   datEv = datEv/max(datEv)
@@ -773,83 +776,89 @@ plot(genDat(x), type='l',main="orginal")
 
 ```{r}
 
-ampOrg = amp
-freqOrg = frq
-xOrg=c(ampOrg,freqOrg)
+ampOrg <- amp
+freqOrg <- frq
+xOrg <- c(ampOrg, freqOrg)
 
 
 library(genalg)
 library(ggplot2)
-#The genalg algorithm tries to optimize towards the minimum value. 
-datOrg = dat
+# The genalg algorithm tries to optimize towards the minimum value.
+datOrg <- dat
 
 max(dat)
 min(dat)
-dat = dat - min(dat)
-dat = dat/max(dat)
+dat <- dat - min(dat)
+dat <- dat / max(dat)
 
 evalFunc <- function(x) {
-  len = length(x)
-  len2 = length(x)/2
-  lenVec = length(dat)
-  amp=x[1:(length(x)/2)]
-  frq=x[(len2+1):(len)]
-  datEv=rep(0,lenVec)
-  for (nsi in 1:length(frq)){
-    datEv = datEv + amp[nsi] * sin((c(1:lenVec))*frq[nsi] )
+  len <- length(x)
+  len2 <- length(x) / 2
+  lenVec <- length(dat)
+  amp <- x[1:(length(x) / 2)]
+  frq <- x[(len2 + 1):(len)]
+  datEv <- rep(0, lenVec)
+  for (nsi in 1:length(frq)) {
+    datEv <- datEv + amp[nsi] * sin((c(1:lenVec)) * frq[nsi])
   }
-  
-  datEv = datEv - min(datEv)
-  datEv = datEv/max(datEv)
+
+  datEv <- datEv - min(datEv)
+  datEv <- datEv / max(datEv)
   # return(sum(sqrt((dat - datEv)^2)))
-  return(as.numeric(dist(matrix(c(dat,datEv),nrow = 2,byrow=T))))
+  return(as.numeric(dist(matrix(c(dat, datEv), nrow = 2, byrow = T))))
 }
 evalFunc(x)
 
 
 
-st=1
+st <- 1
 monitor <- function(obj) {
   # plot the population
-  xlim = c(obj$stringMin[1], obj$stringMax[1]);
-  ylim = c(obj$stringMin[2], obj$stringMax[2]);
+  xlim <- c(obj$stringMin[1], obj$stringMax[1])
+  ylim <- c(obj$stringMin[2], obj$stringMax[2])
   #    plot(obj$population, xlim=xlim, ylim=ylim,xlab="x[1]", ylab="x[2]", cex = .1, main=paste(st,":",Sys.time()));
-  bestVec[(iter*(idx-1)+1):(iter*idx)] <<- obj$best
-  plot(log(bestVec[!is.na(bestVec)]), cex = .1, type='l', main=paste(st,":",Sys.time(), ":", idx));
-  st<<-st+1
+  bestVec[(iter * (idx - 1) + 1):(iter * idx)] <<- obj$best
+  plot(log(bestVec[!is.na(bestVec)]), cex = .1, type = "l", main = paste(st, ":", Sys.time(), ":", idx))
+  st <<- st + 1
 }
 
-GAmodel=list()
-nrepeat=100000
-iter = 10
-bestVec=rep(NA,nrepeat*iter)
+GAmodel <- list()
+if (Sys.info()["nodename"] == "berndCIH.local") {
+  nrepeat <- 10
+} else {
+  nrepeat <- 100000
+}
+iter <- 10
+bestVec <- rep(NA, nrepeat * iter)
 
-suggestions = matrix(c(1,1,1,1),nrow = 1)
+suggestions <- matrix(c(1, 1, 1, 1), nrow = 1)
 dim(suggestions)
-for (idx in 1:nrepeat){
-  st=1
-  GAmodel[[idx]] <- rbga(stringMin = rep(0,2*nSin), 
-                         stringMax = c(rep(100,nSin),rep(100,nSin)),  
-                             popSize = 2800, iters = iter, 
-                             mutationChance = 0.1, elitism = T, 
-                             evalFunc = evalFunc,  
-                             monitorFunc=monitor, 
-                             suggestions = suggestions,
-                             verbose=T)
-  currRet = apply(GAmodel[[idx]]$population, 1, evalFunc)
-  suggestions = matrix(GAmodel[[idx]]$population[
-    which(min(currRet)==currRet)[1]
-    ,],nrow = 1)
+for (idx in 1:nrepeat) {
+  st <- 1
+  GAmodel[[idx]] <- rbga(
+    stringMin = rep(0, 2 * nSin),
+    stringMax = c(rep(100, nSin), rep(100, nSin)),
+    popSize = 2800, iters = iter,
+    mutationChance = 0.1, elitism = T,
+    evalFunc = evalFunc,
+    monitorFunc = monitor,
+    suggestions = suggestions,
+    verbose = T
+  )
+  currRet <- apply(GAmodel[[idx]]$population, 1, evalFunc)
+  suggestions <- matrix(GAmodel[[idx]]$population[
+    which(min(currRet) == currRet)[1],
+  ], nrow = 1)
 }
 
 cat(summary(GAmodel))
 
-y=GAmodel[[idx-1]]$population[1,]
+y <- GAmodel[[idx - 1]]$population[1, ]
 evalBinFunc(y)
 
-plot(genDat(xOrg), type='l')
-plot(genDat(y), type='l')
-plot(genDat(y)-genDat(xOrg), type='l')
+plot(genDat(xOrg), type = "l")
+plot(genDat(y), type = "l")
+plot(genDat(y) - genDat(xOrg), type = "l")
 evalFunc(xOrg)
 evalFunc(y)
 y
@@ -857,11 +866,11 @@ xOrg
 
 
 plot.new()
-par(mfrow=c(2,5))
+par(mfrow = c(2, 5))
 
-for(idx in 1:15){
-  y=GAmodel[[idx]]$population[1,]
-  plot(genDat(y)-genDat(xOrg), type='l', main=idx)
+for (idx in 1:15) {
+  y <- GAmodel[[idx]]$population[1, ]
+  plot(genDat(y) - genDat(xOrg), type = "l", main = idx)
 }
 
 
@@ -870,12 +879,11 @@ GAmodel$best
 # current population
 GAmodel$population
 
-currRet = apply(GAmodel$population, 1, evalFunc)
-GAmodel$population[which(min(currRet)==currRet),]
+currRet <- apply(GAmodel$population, 1, evalFunc)
+GAmodel$population[which(min(currRet) == currRet), ]
 
 
 
 monitor(GAmodel)
-
 ```
 
